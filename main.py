@@ -3,6 +3,8 @@ import requests
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import os
+from pytz import timezone
+
 
 # Load bot token and IDs from environment variables
 BOT_TOKEN = os.getenv("BOT_TOKEN")  # Fetch bot token
@@ -13,7 +15,7 @@ MENTION_USER_ID = int(os.getenv("MENTION_USER_ID"))  # Fetch mention user ID as 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 scheduler = AsyncIOScheduler()
-
+IST = timezone("Asia/Kolkata")  # Define IST timezone
 # Create bot command tree for slash commands
 tree = bot.tree  
 
@@ -53,7 +55,12 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
     print(f'Logged in as {bot.user}')
-    scheduler.add_job(lambda: bot.loop.create_task(send_daily_quote()), "cron", hour=8, minute=40)  # Send daily quote at 9 AM
+    scheduler.add_job(
+    lambda: bot.loop.create_task(send_daily_quote()),
+    "cron",
+    hour=8, minute=47,
+    timezone=IST  # Set timezone to IST
+)    
     scheduler.start()
 
 # Run the bot
