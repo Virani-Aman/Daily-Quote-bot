@@ -60,7 +60,7 @@ async def on_ready():
     scheduler.add_job(
         lambda: bot.loop.create_task(send_daily_quote()),
         "cron",
-        hour=9, minute=6,
+        hour=9, minute=00,
         timezone=IST  # Set timezone to IST
     )    
     scheduler.start()
