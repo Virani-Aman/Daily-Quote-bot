@@ -8,7 +8,8 @@ from pytz import timezone
 # Load bot token and IDs from environment variables
 BOT_TOKEN = os.getenv("BOT_TOKEN")  # Fetch bot token
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))  # Fetch channel ID as an integer
-MENTION_ROLE_ID = int(os.getenv("MENTION_ROLE_ID"))  # Fetch mention role ID as an integer
+MENTION_ROLE_ID = os.getenv("MENTION_ROLE_ID")  # Get role ID as a string
+
 
 # Set up bot intents
 intents = discord.Intents.default()
@@ -18,6 +19,10 @@ IST = timezone("Asia/Kolkata")  # Define IST timezone
 tree = bot.tree  # Create bot command tree for slash commands
 
 # Function to fetch a random quote
+if MENTION_ROLE_ID is None:
+    raise ValueError("❌ ERROR: MENTION_ROLE_ID environment variable is missing!")
+
+MENTION_ROLE_ID = int(MENTION_ROLE_ID)  # Convert to integer
 def get_quote():
     try:
         response = requests.get("https://zenquotes.io/api/random")
@@ -55,7 +60,7 @@ async def on_ready():
     scheduler.add_job(
         lambda: bot.loop.create_task(send_daily_quote()),
         "cron",
-        hour=8, minute=59,
+        hour=9, minute=02,
         timezone=IST  # Set timezone to IST
     )    
     scheduler.start()
