@@ -20,13 +20,14 @@ tree = bot.tree
 # Function to fetch a random quote
 def get_quote():
     try:
-        response = requests.get("https://api.quotable.io/random")
+        response = requests.get("https://zenquotes.io/api/random")
         if response.status_code == 200:
             data = response.json()
-            return f'\"{data["content"]}\" - {data["author"]}'
+            return f'\"{data[0]["q"]}\" - {data[0]["a"]}'
         return "Could not fetch a quote at this time."
     except Exception as e:
         return f"Error fetching quote: {e}"
+
 
 # Function to send the daily quote
 async def send_daily_quote():
