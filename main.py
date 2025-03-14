@@ -3,13 +3,11 @@ import requests
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import os
-# Replace with your bot token and channel ID
-import os
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Fetch the bot token from Railway environment variables
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))  # Fetch channel ID as an integer
-MENTION_USER_ID = int(os.getenv("MENTION_USER_ID"))  # Fetch mention user ID as an integer
-
+# Load environment variables
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+MENTION_USER_ID = int(os.getenv("MENTION_USER_ID"))
 
 # Set up bot intents
 intents = discord.Intents.default()
@@ -17,6 +15,9 @@ intents.messages = True  # Enable message-related events
 
 # Initialize bot
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+# Use discord.app_commands to create slash commands
+tree = bot.tree
 scheduler = AsyncIOScheduler()
 
 # Function to fetch a random quote from the API
@@ -38,11 +39,22 @@ async def send_daily_quote():
         mention = f"<@{MENTION_USER_ID}>"  # Mention the user
         await channel.send(f"{quote}\n{mention}")
 
+# Slash command to generate a quote manually
+@tree.command(name="quote", description="Get a random inspirational quote")
+async def quote_command(interaction: discord.Interaction):
+    quote = get_quote()
+    mention = f"<@{interaction.user.id}>"  # Mention the user who used the command
+    await interaction.response.send_message(f"{quote}\n{mention}")
+
 # Bot event when it starts
 @bot.event
 async def on_ready():
+    await bot.wait_until_ready()  # Wait until bot is ready before registering commands
+    await tree.sync()  # Sync slash commands with Discord
     print(f'Logged in as {bot.user}')
-    scheduler.add_job(lambda: bot.loop.create_task(send_daily_quote()), "cron", hour=9, minute=0)  # Sends the quote at 9 AM daily
+    
+    # Schedule daily quote at 9 AM
+    scheduler.add_job(lambda: bot.loop.create_task(send_daily_quote()), "cron", hour=9, minute=0)
     scheduler.start()
 
 # Run the bot
