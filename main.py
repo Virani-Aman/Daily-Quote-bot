@@ -4,9 +4,12 @@ from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import os
 # Replace with your bot token and channel ID
-BOT_TOKEN = os.getenv("BOT_TOKEN")  # Fetch from environment variable
-CHANNEL_ID = int(os.getenv("1343489131455578153"))  # Fetch as integer
-MENTION_USER_ID = int(os.getenv("1347770766674104392"))  # Fetch as integer
+import os
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # Fetch the bot token from Railway environment variables
+CHANNEL_ID = int(os.getenv("CHANNEL_ID"))  # Fetch channel ID as an integer
+MENTION_USER_ID = int(os.getenv("MENTION_USER_ID"))  # Fetch mention user ID as an integer
+
 
 # Set up bot intents
 intents = discord.Intents.default()
