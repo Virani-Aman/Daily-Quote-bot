@@ -53,7 +53,7 @@ async def on_ready():
     except Exception as e:
         print(f"Error syncing commands: {e}")
     print(f'Logged in as {bot.user}')
-    scheduler.add_job(lambda: bot.loop.create_task(send_daily_quote()), "cron", hour=8, minute=35)  # Send daily quote at 9 AM
+    scheduler.add_job(lambda: bot.loop.create_task(send_daily_quote()), "cron", hour=8, minute=40)  # Send daily quote at 9 AM
     scheduler.start()
 
 # Run the bot
